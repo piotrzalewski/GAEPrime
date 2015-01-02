@@ -9,21 +9,40 @@ def org = params['number']
 def primeService = new PrimeService()
 
 def loadPrimes() {
-
-//    def entities = datastore.execute {
-//        select all from "smallprimes"
-//        sort asc by start
-//    }
-//    def entities = smallprimes.findAll()
+    def cached=getPrimesFromCache()
+    if(cached) return cached
     def entities = smallprimes.findAll { sort asc by "start" }
-    logger['root'].info("Loaded " + entities.size() + " chunk of data")
-    logger['root'].info("from ALL " + smallprimes.count() + " entities")
+    log.info("Loaded " + entities.size() + " chunk of data")
+    log.info("from ALL " + smallprimes.count() + " entities")
 
     def primes = entities.collect { it.list }.flatten()
-    logger['root'].info("Loaded " + primes.size() + " primes")
-    logger['root'].info("Loaded primes from " + primes[0] + " to " + primes[-1])
-
+    log.info("Loaded " + primes.size() + " primes")
+    log.info("Loaded primes from " + primes[0] + " to " + primes[-1])
+    cachePrimes(primes)
     primes
+}
+
+def cachePrimes(primes){
+    def number_of_chunks=primes.size()/10_000+1;
+    for(int a=0;a<number_of_chunks;a++){
+        memcache['primes'+a]=primes[a*10_000,(a+1)*10_000-1]
+    }
+    memcache['primes_count']=number_of_chunks;
+}
+
+def getPrimesFromCache(){
+    if('primes_count' in memcache){
+        def number_of_chunks=memcache['primes_count']
+        def primes=[]
+        for (int a=0;a<number_of_chunks;a++){
+            if('primes'+a in memcache){
+                primes.add(memcache['primes'+a])
+            }else{
+                return null
+            }
+        }
+        primes.flatten()
+    }
 }
 
 def primes = loadPrimes()
