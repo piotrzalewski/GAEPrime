@@ -9,7 +9,7 @@
         <min-idle-instances>1</min-idle-instances>
         <max-idle-instances>1</max-idle-instances>
         <min-pending-latency>1000ms</min-pending-latency>
-        <max-pending-latency>15000ms</max-pending-latency>
+        <max-pending-latency>1500ms</max-pending-latency>
     </automatic-scaling>
     <!-- If all your templates and groovlets are encoding in UTF-8 -->
     <!-- Please specify the settings below, otherwise weird characters may appear in your templates -->

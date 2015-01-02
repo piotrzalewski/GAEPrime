@@ -1,0 +1,14 @@
+<!-- Indices written at Fri, 2 Jan 2015 01:34:52 CET -->
+
+<datastore-indexes autoGenerate="true">
+
+    <!-- Used 8 times in query history -->
+    <datastore-index kind="primes" ancestor="false" source="auto">
+        <property name="start" direction="asc"/>
+        <property name="index" direction="asc"/>
+    </datastore-index>
+    <datastore-index kind="primes" ancestor="false" source="manual">
+        <property name="class start" direction="asc"/>
+        <property name="index" direction="asc"/>
+    </datastore-index>
+</datastore-indexes>

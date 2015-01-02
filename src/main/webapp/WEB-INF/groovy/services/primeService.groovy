@@ -1,28 +1,46 @@
 package services
 
+import com.google.appengine.api.datastore.Entity
+import com.google.appengine.api.datastore.PreparedQuery
+import com.google.appengine.api.datastore.Query
 import groovyx.gaelyk.GaelykBindings
+
+import static com.google.appengine.api.datastore.FetchOptions.Builder.*
 
 /**
  * Created by peter on 01/01/15.
  */
 
 @GaelykBindings
-public class PrimeService{
+public class PrimeService {
 
-    static def calculatePrimes(org){
+    def calculatePrimes(org,primes) {
+//        def primes = loadPrimes()
         BigInteger number = org as BigInteger
-        BigDecimal max = Math.sqrt(number)+1
+        BigDecimal max = Math.sqrt(number) + 1
 
         def list = []
-        int a=2
-        while ( a < max && number > 1) {
-            while (number % a == 0) {
-                list.add(a)
-                number = number / a
+        def a = 0
+        def p = primes[a]
+        while (p < max && number > 1) {
+            p = primes[a]
+            if(!p) return [-1]
+            while (number % p == 0) {
+                list.add(p)
+                number = number / p
             }
             a++
         }
         if (number > 1) list.add(number)
         list
     }
+
+    def getTableOfPrimes(min, max) {
+        def list = min..max
+        def primes = list.findAll { x -> (2..Math.sqrt(x)).every { x % it != 0 } }
+        if (min <= 2) primes = [2, *primes]
+        primes
+    }
+
+ 
 }
